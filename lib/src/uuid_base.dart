@@ -189,6 +189,12 @@ class Uuid implements Comparable<Uuid> {
   Uuid._fromValidBytes(ByteBuffer bytes)
       : bytes = UnmodifiableByteBufferView(bytes);
 
+  /// Generates a v1 (time-based) UUID.
+  ///
+  /// The default implementation doesn't use a real MAC address as a node ID.
+  /// Instead it generates a random node ID and sets the "multi-cast bit"
+  /// as recommended by RFC 4122. A generated node ID will be kept in-memory
+  /// and reused during the lifetime of a process, but won't be persisted.
   factory Uuid.v1({int? nodeId}) {
     final bytes = Uuid1Generator().generate(nodeId: nodeId);
     // We trust our own generator not to modify the bytes anymore.
