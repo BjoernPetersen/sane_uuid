@@ -138,7 +138,7 @@ class Uuid implements Comparable<Uuid> {
   /// Note that only the [UuidVariant.rfc4122] variant is properly represented
   /// by this class. Other variants are treated as if they were RFC 4122 UUIDs.
   UuidVariant get variant {
-    final variantBits = clockSequenceHighAndReserved >> 13;
+    final variantBits = clockSequenceHighAndReserved >> 5;
     if (variantBits < 4) {
       return UuidVariant.ncsReserved;
     } else if (variantBits == 7) {
