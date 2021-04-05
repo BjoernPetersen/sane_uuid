@@ -88,7 +88,7 @@ class Uuid implements Comparable<Uuid> {
   /// For UUID version 4, the timestamp is a randomly or pseudo-randomly
   /// generated 60-bit value, as described in
   /// [Section 4.4](https://tools.ietf.org/html/rfc4122#section-4.4).
-  int get time => timeHigh << 48 + timeMid << 32 + timeLow;
+  int get time => (timeHigh << 48) + (timeMid << 32) + timeLow;
 
   /// The parsed [time] as a usable [DateTime] object.
   ///
@@ -155,7 +155,7 @@ class Uuid implements Comparable<Uuid> {
 
   /// The combined clock sequence. Note that the semantics of this value differ
   /// between UUID versions. For v4 UUIDs in particular, this is a random value.
-  int get clockSequence => clockSequenceHigh << 8 + clockSequenceLow;
+  int get clockSequence => (clockSequenceHigh << 8) + clockSequenceLow;
 
   /// The spatially unique node identifier.
   ///
@@ -181,7 +181,7 @@ class Uuid implements Comparable<Uuid> {
   /// For UUID version 4, the node field is a randomly or pseudo-randomly
   /// generated 48-bit value as described in
   /// [Section 4.4](https://tools.ietf.org/html/rfc4122#section-4.4).
-  int get node => _byteData.getUint16(10) << 32 + _byteData.getUint32(12);
+  int get node => (_byteData.getUint16(10) << 32) + _byteData.getUint32(12);
 
   /// Creates an instance from the given bytes without defensively copying them.
   ///
