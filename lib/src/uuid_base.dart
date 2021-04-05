@@ -65,6 +65,8 @@ class Uuid implements Comparable<Uuid> {
   int get timeHigh => timeHighAndVersion & 0x0FFF;
 
   /// The full "timestamp" of the UUID.
+  /// Note that [parsedTime] provides a parsed version of this timestamp,
+  /// albeit only for v1 UUIDs.
   ///
   /// ## Definition from RFC 4122
   ///
@@ -88,9 +90,38 @@ class Uuid implements Comparable<Uuid> {
   /// [Section 4.4](https://tools.ietf.org/html/rfc4122#section-4.4).
   int get time => timeHigh << 48 + timeMid << 32 + timeLow;
 
+  /// The parsed [time] as a usable [DateTime] object.
+  ///
+  /// This method is only useful for v1 UUIDs, because the [time] field has
+  /// different semantics for other version.
+  ///
+  /// Throws a [StateError] if [variant] is not [UuidVariant.rfc4122] or
+  /// [version] is not 1.
+  DateTime get parsedTime {
+    if (variant != UuidVariant.rfc4122) {
+      throw StateError('Only available for RFC 4122 UUIDs');
+    } else if (version != 1) {
+      throw StateError('Only available for v1 UUIDs');
+    }
+    // time is the count of 100-nanosecond intervals
+    // since 00:00:00.00, 15 October 1582.
+    final referenceTime = DateTime.utc(1582, 10, 15);
+    // 1000 nanoseconds are a microsecond.
+    final microseconds = (time / 10).round();
+    final timeDuration = Duration(microseconds: microseconds);
+    return referenceTime.add(timeDuration);
+  }
+
   /// The version that was originally multiplexed in [timeHighAndVersion].
+  ///
   /// If this UUID conforms to the structure laid out in RFC 4122, this will
-  /// be a number between 1 (inclusive) and 5 (inclusive).
+  /// be a number between 1 and 5 with the following descriptions:
+  ///
+  /// - 1: Time-based version
+  /// - 2: DCE Security version, with embedded POSIX UIDs
+  /// - 3: Name-based version with MD5 hashing
+  /// - 4: Random version
+  /// - 5: Name-based version with SHA-1 hashing
   int get version => timeHighAndVersion >> 12;
 
   /// The high field of the clock sequence multiplexed with the variant.
