@@ -195,6 +195,9 @@ class Uuid implements Comparable<Uuid> {
   /// Instead it generates a random node ID and sets the "multi-cast bit"
   /// as recommended by RFC 4122. A generated node ID will be kept in-memory
   /// and reused during the lifetime of a process, but won't be persisted.
+  ///
+  /// Instead of using a generated node ID, you may specify one using [nodeId].
+  /// If the given node ID is larger than 48-bit, an [ArgumentError] is thrown.
   factory Uuid.v1({int? nodeId}) {
     final bytes = Uuid1Generator().generate(nodeId: nodeId);
     // We trust our own generator not to modify the bytes anymore.
