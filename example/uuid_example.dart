@@ -28,9 +28,8 @@ void main() {
   // Is ordered like this now: [smallerUuid, parsedHyphenated, biggerUuid]
   print(list);
 
-  // TODO: generate v1 ourselves here
   // Access any detailed information in the UUID:
-  final timeBasedUuid = Uuid.fromString('120ff87c-9645-11eb-bb3c-001a7dda7112');
+  final timeBasedUuid = Uuid.v1();
   assert(timeBasedUuid.version == 1);
   final time = timeBasedUuid.parsedTime;
   // A usable timestamp for v1 UUIDs!

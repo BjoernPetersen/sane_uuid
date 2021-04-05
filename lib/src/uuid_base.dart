@@ -189,12 +189,20 @@ class Uuid implements Comparable<Uuid> {
   Uuid._fromValidBytes(ByteBuffer bytes)
       : bytes = UnmodifiableByteBufferView(bytes);
 
+  factory Uuid.v1({int? nodeId}) {
+    final bytes = Uuid1Generator().generate(nodeId: nodeId);
+    // We trust our own generator not to modify the bytes anymore.
+    return Uuid._fromValidBytes(bytes);
+  }
+
   /// Generates a v4 (random) UUID.
   ///
   /// If you don't pass a random number generator for the [random] parameter,
   /// a global secure one will be used.
   factory Uuid.v4({Random? random}) {
-    return Uuid4Generator(random).generate();
+    final bytes = Uuid4Generator(random).generate();
+    // We trust our own generator not to modify the bytes anymore.
+    return Uuid._fromValidBytes(bytes);
   }
 
   /// Parses a UUID from the given String.

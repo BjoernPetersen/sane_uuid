@@ -4,8 +4,7 @@ class Late<T> {
   T? _value;
 
   T get value {
-    _value ??= _generate();
-    return _value!;
+    return _value ??= _generate();
   }
 
   Late(this._generate);
