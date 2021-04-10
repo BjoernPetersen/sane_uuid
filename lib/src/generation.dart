@@ -2,9 +2,12 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:sane_uuid/src/late.dart';
-import 'package:sane_uuid/src/uuid_builder.dart';
+import 'package:sane_uuid/src/uuid_base.dart';
+
+const _variant = 2 << 6;
 
 class Uuid1Generator {
+  static const _version = 1 << 12;
   static final _random = Late(() => Random.secure());
   static DateTime? _lastTime;
   static int? _clockSequence;
@@ -59,33 +62,40 @@ class Uuid1Generator {
     }
     final node = nodeId ?? _getNode();
 
-    final builder = UuidBuilder();
-    builder.setTimeAndVersion(timestamp, 1);
-    builder.setClockSequenceAndVariant(clockSequence);
-    builder.setNode(node);
+    final builder = ByteData(16);
+    builder.setUint32(0, timestamp & 0xFFFFFFFF);
+    builder.setUint16(4, (timestamp >> 32) & 0xFFFF);
+    builder.setUint16(6, (timestamp >> 48) + _version);
+
+    builder.setUint8(8, (clockSequence >> 8) + _variant);
+    builder.setUint8(9, clockSequence & 0xFF);
+
+    builder.setUint16(10, node >> 32);
+    builder.setUint32(12, node & 0xFFFFFFFF);
     return builder.buffer;
   }
 }
 
 class Uuid4Generator {
+  static const _version = 4 << 4;
   static final _fallbackRandom = Late(() => Random.secure());
   final Random _random;
 
   Uuid4Generator(Random? random) : _random = random ?? _fallbackRandom.value;
 
-  int _generate60BitInt() {
-    return (_random.nextInt(0xFFFFFFF) << 32) + _random.nextInt(0xFFFFFFFF);
-  }
-
-  int _generate48BitInt() {
-    return (_random.nextInt(0xFFFF) << 32) + _random.nextInt(0xFFFFFFFF);
-  }
-
   ByteBuffer generate() {
-    final builder = UuidBuilder();
-    builder.setTimeAndVersion(_generate60BitInt(), 4);
-    builder.setClockSequenceAndVariant(_random.nextInt(0x3FFF));
-    builder.setNode(_generate48BitInt());
-    return builder.buffer;
+    final builder = BytesBuilder(copy: false);
+    for (var byteIndex = 0; byteIndex < kUuidBytes; byteIndex += 1) {
+      var byte = _random.nextInt(255);
+      if (byteIndex == 6) {
+        // Insert version
+        byte = (byte & 0x0F) + _version;
+      } else if (byteIndex == 8) {
+        // Set reserved bits
+        byte = (byte & 0x3F) + _variant;
+      }
+      builder.addByte(byte);
+    }
+    return builder.takeBytes().buffer;
   }
 }
