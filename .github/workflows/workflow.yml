@@ -1,0 +1,39 @@
+name: Workflow
+on: [push]
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    container: google/dart:2.12
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v1
+      - name: Run tests
+        run: dart test
+
+  check_format:
+    name: Check Format
+    runs-on: ubuntu-latest
+    container: google/dart:2.12
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v1
+      - name: Check bin formatting
+        run: dart format test --set-exit-if-changed
+      - name: Check lib formatting
+        run: dart format lib --set-exit-if-changed
+      - name: Check test formatting
+        run: dart format test --set-exit-if-changed
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    container: google/dart:2.12
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v1
+      - name: Get dependencies
+        run: pub get
+      - name: Run Analysis
+        run: dart analyze
