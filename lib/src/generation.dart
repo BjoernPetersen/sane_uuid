@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:crypto/crypto.dart';
 import 'package:sane_uuid/src/late.dart';
 import 'package:sane_uuid/src/uuid_base.dart';
 
@@ -76,26 +78,46 @@ class Uuid1Generator {
   }
 }
 
+/// Builds UUID bytes by reading from [getByte] and multiplexing the variant
+/// and [version] in the appropriate places.
+ByteBuffer _buildBytes(int version, int Function(int index) getByte) {
+  final builder = BytesBuilder(copy: false);
+  for (var byteIndex = 0; byteIndex < kUuidBytes; byteIndex += 1) {
+    var byte = getByte(byteIndex);
+    if (byteIndex == 6) {
+      // Insert version
+      byte = (byte & 0x0F) + (version << 4);
+    } else if (byteIndex == 8) {
+      // Set reserved bits
+      byte = (byte & 0x3F) + _variant;
+    }
+    builder.addByte(byte);
+  }
+  return builder.takeBytes().buffer;
+}
+
 class Uuid4Generator {
-  static const _version = 4 << 4;
   static final _fallbackRandom = Late(() => Random.secure());
   final Random _random;
 
   Uuid4Generator(Random? random) : _random = random ?? _fallbackRandom.value;
 
   ByteBuffer generate() {
-    final builder = BytesBuilder(copy: false);
-    for (var byteIndex = 0; byteIndex < kUuidBytes; byteIndex += 1) {
-      var byte = _random.nextInt(255);
-      if (byteIndex == 6) {
-        // Insert version
-        byte = (byte & 0x0F) + _version;
-      } else if (byteIndex == 8) {
-        // Set reserved bits
-        byte = (byte & 0x3F) + _variant;
-      }
-      builder.addByte(byte);
-    }
-    return builder.takeBytes().buffer;
+    return _buildBytes(4, (_) => _random.nextInt(255));
+  }
+}
+
+class Uuid5Generator {
+  ByteBuffer _createDigest(Uuid namespace, String name) {
+    final concatenated = <int>[];
+    concatenated.addAll(namespace.bytes.asUint8List());
+    concatenated.addAll(utf8.encode(name));
+    final digest = sha1.convert(concatenated);
+    return Uint8List.fromList(digest.bytes).buffer;
+  }
+
+  ByteBuffer generate({required Uuid namespace, required String name}) {
+    final digest = _createDigest(namespace, name).asByteData(0, kUuidBytes);
+    return _buildBytes(5, (index) => digest.getUint8(index));
   }
 }

@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:meta/meta.dart';
 import 'package:sane_uuid/src/generation.dart';
 import 'package:sane_uuid/src/hex.dart';
+import 'package:sane_uuid/src/namespace.dart';
 
 /// The length of a UUID in bytes.
 const kUuidBytes = 16;
@@ -210,6 +211,17 @@ class Uuid implements Comparable<Uuid> {
   /// a global secure one will be used.
   factory Uuid.v4({Random? random}) {
     final bytes = Uuid4Generator(random).generate();
+    // We trust our own generator not to modify the bytes anymore.
+    return Uuid._fromValidBytes(bytes);
+  }
+
+  /// Generates a v5 (name-based with SHA-1) UUID.
+  ///
+  /// Expects a [namespace] UUID. Some predefined namespace UUIDs can be found
+  /// in [Namespaces]. The [name] should conform to the conventions of the
+  /// namespace.
+  factory Uuid.v5({required Uuid namespace, required String name}) {
+    final bytes = Uuid5Generator().generate(namespace: namespace, name: name);
     // We trust our own generator not to modify the bytes anymore.
     return Uuid._fromValidBytes(bytes);
   }
