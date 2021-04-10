@@ -3,6 +3,7 @@ import 'package:sane_uuid/uuid.dart';
 void main() {
   // randomly generated using secure random number generator
   final Uuid randomUuid = Uuid.v4();
+  print(randomUuid);
 
   // parse any common UUID string
   final parsedHyphenated = Uuid.fromString(
