@@ -34,6 +34,10 @@ enum UuidVariant {
 /// Instances follow the rules for equivalence and ordering laid out by the RFC.
 @immutable
 class Uuid implements Comparable<Uuid> {
+  /// The nil UUID is special form of UUID that is specified to have all
+  /// 128 bits set to zero.
+  static final Uuid nil = Uuid._fromValidBytes(Uint8List(kUuidBytes).buffer);
+
   /// The raw bytes of this UUID. The returned ByteBuffer is unmodifiable and
   /// contains exactly 16 bytes.
   final ByteBuffer bytes;
