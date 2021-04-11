@@ -1,6 +1,6 @@
 name: sane_uuid
 description: A sane UUID implementation.
-version: 0.1.0-alpha.1
+version: 1.0.0-alpha.1
 homepage: https://github.com/BjoernPetersen/sane_uuid
 
 environment:
