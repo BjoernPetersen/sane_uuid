@@ -37,46 +37,46 @@ void main() {
 
   group('invalid values', () {
     test('empty/blank values', () {
-      expect(() => Uuid.fromString(''), throwsArgumentError);
-      expect(() => Uuid.fromString(' '), throwsArgumentError);
-      expect(() => Uuid.fromString('\n'), throwsArgumentError);
+      expect(() => Uuid.fromString(''), throwsFormatException);
+      expect(() => Uuid.fromString(' '), throwsFormatException);
+      expect(() => Uuid.fromString('\n'), throwsFormatException);
     });
     test('surrounding whitespace', () {
       expect(
         () => Uuid.fromString('123f567a-1234-5678-1e34-b67812cd5678 '),
-        throwsArgumentError,
+        throwsFormatException,
       );
       expect(
         () => Uuid.fromString(' 123f567a-1234-5678-1e34-b67812cd5678'),
-        throwsArgumentError,
+        throwsFormatException,
       );
       expect(
         () => Uuid.fromString('123f567a-1234-5678-1e34-b67812cd5678\n'),
-        throwsArgumentError,
+        throwsFormatException,
       );
     });
     test('long value', () {
       expect(
         () => Uuid.fromString('123f567a-1234-5678-1e34-b67812cd56781'),
-        throwsArgumentError,
+        throwsFormatException,
       );
     });
     test('short value', () {
       expect(
         () => Uuid.fromString('123f567a-1234-5678-1e34-b67812cd781'),
-        throwsArgumentError,
+        throwsFormatException,
       );
     });
     test('misplaced hyphen', () {
       expect(
         () => Uuid.fromString('123f-567a1234-5678-1e34-b67812cd5678'),
-        throwsArgumentError,
+        throwsFormatException,
       );
     });
     test('non-hex letters', () {
       expect(
         () => Uuid.fromString('g23f567a-1234-5678-1e34-b67812cd5678'),
-        throwsArgumentError,
+        throwsFormatException,
       );
     });
   });

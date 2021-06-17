@@ -248,16 +248,12 @@ class Uuid implements Comparable<Uuid> {
   /// Furthermore, parsing is case insensitive, but surrounding whitespace will
   /// NOT be ignored.
   ///
-  /// This method will throw an [ArgumentError] if the given String is not a
+  /// This method will throw an [FormatException] if the given String is not a
   /// valid UUID.
   factory Uuid.fromString(String uuidString) {
     final match = _uuidPattern.firstMatch(uuidString);
     if (match == null) {
-      throw ArgumentError.value(
-        uuidString,
-        'uuidString',
-        'Invalid UUID: $uuidString',
-      );
+      throw FormatException('Invalid UUID', uuidString);
     }
     final builder = BytesBuilder(copy: false);
     final decoder = Hex.decoder;
