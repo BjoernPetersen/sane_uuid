@@ -1,9 +1,7 @@
 name: sane_uuid
 description: >
-  A sane UUID implementation with support for generating v1, v4 and v5 UUIDs according to RFC4122.
-  Comes with a versatile UUID type with support for any syntactically valid UUID, allowing comparison/sorting,
-  equality checks and access to the fields defined by RFC4122, including the UUID version.
-version: 1.0.0-alpha.3
+  A sane UUID implementation with support for generating and handling v1, v4 and v5 UUIDs according to RFC4122.
+version: 1.0.0-alpha.4
 homepage: https://github.com/BjoernPetersen/sane_uuid
 
 environment:
