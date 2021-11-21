@@ -8,7 +8,7 @@ jobs:
     container: google/dart:2.12
     steps:
       - name: Check out repo
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Run tests
         run: dart test
 
@@ -18,7 +18,7 @@ jobs:
     container: google/dart:2.12
     steps:
       - name: Check out repo
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Check bin formatting
         run: dart format test --set-exit-if-changed
       - name: Check lib formatting
@@ -32,7 +32,7 @@ jobs:
     container: google/dart:2.12
     steps:
       - name: Check out repo
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Get dependencies
         run: pub get
       - name: Run Analysis
