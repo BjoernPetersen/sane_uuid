@@ -1,6 +1,6 @@
 import 'package:sane_uuid/src/uuid_base.dart';
 
-class Namespaces {
+final class Namespaces {
   const Namespaces._();
 
   /// Name string is a fully-qualified domain name.

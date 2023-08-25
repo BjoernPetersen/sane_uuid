@@ -8,7 +8,7 @@ import 'package:sane_uuid/src/uuid_base.dart';
 
 const _variant = 2 << 6;
 
-class Uuid1Generator {
+final class Uuid1Generator {
   static const _version = 1 << 12;
   static final _random = Late(() => Random.secure());
   static DateTime? _lastTime;
@@ -96,7 +96,7 @@ ByteBuffer _buildBytes(int version, int Function(int index) getByte) {
   return builder.takeBytes().buffer;
 }
 
-class Uuid4Generator {
+final class Uuid4Generator {
   static final _fallbackRandom = Late(() => Random.secure());
   final Random _random;
 
@@ -107,7 +107,7 @@ class Uuid4Generator {
   }
 }
 
-class Uuid5Generator {
+final class Uuid5Generator {
   ByteBuffer _createDigest(Uuid namespace, String name) {
     final concatenated = <int>[];
     concatenated.addAll(namespace.bytes.asUint8List());

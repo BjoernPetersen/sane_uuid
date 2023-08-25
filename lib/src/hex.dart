@@ -3,14 +3,13 @@ import 'dart:typed_data';
 
 const _alphabet = '0123456789abcdef';
 
-abstract class Hex {
+abstract base class Hex {
   const Hex._();
-
   static const Converter<ByteData, String> encoder = _HexEncoder();
   static const Converter<String, List<int>> decoder = _HexDecoder();
 }
 
-class _HexEncoder extends Converter<ByteData, String> {
+final class _HexEncoder extends Converter<ByteData, String> {
   const _HexEncoder();
 
   @override
@@ -27,7 +26,7 @@ class _HexEncoder extends Converter<ByteData, String> {
   }
 }
 
-class _HexDecoder extends Converter<String, List<int>> {
+final class _HexDecoder extends Converter<String, List<int>> {
   const _HexDecoder();
 
   @override

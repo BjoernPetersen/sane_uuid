@@ -1,4 +1,4 @@
-class Late<T> {
+final class Late<T> {
   final T Function() _generate;
 
   T? _value;
