@@ -7,7 +7,7 @@
 - Throw FormatException instead of ArgumentError in `Uuid.fromString`,
   because clients shouldn't have to catch errors.
 
-## 1.1.0-alpha.1
+## 1.0.0-alpha.5
 
 ### Breaking Changes
 
