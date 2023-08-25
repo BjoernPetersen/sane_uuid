@@ -5,22 +5,26 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-    container: google/dart:2.15
     steps:
       - name: Check out repo
         uses: actions/checkout@v3
+      - uses: asdf-vm/actions/install@v2
+      - name: Get dependencies
+        run: dart pub get
+      - name: Run code generation
+        run: dart run build_runner build
       - name: Run tests
         run: dart test
 
-  check_format:
+  check-format:
     name: Check Format
     runs-on: ubuntu-latest
-    container: google/dart:2.15
     steps:
       - name: Check out repo
         uses: actions/checkout@v3
-      - name: Check bin formatting
-        run: dart format test --set-exit-if-changed
+      - uses: asdf-vm/actions/install@v2
+      - name: Check example formatting
+        run: dart format example --set-exit-if-changed
       - name: Check lib formatting
         run: dart format lib --set-exit-if-changed
       - name: Check test formatting
@@ -29,11 +33,13 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
-    container: google/dart:2.15
     steps:
       - name: Check out repo
         uses: actions/checkout@v3
+      - uses: asdf-vm/actions/install@v2
       - name: Get dependencies
-        run: pub get
+        run: dart pub get
+      - name: Run code generation
+        run: dart run build_runner build
       - name: Run Analysis
-        run: dart analyze
+        run: dart analyze --fatal-infos
