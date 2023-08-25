@@ -11,8 +11,6 @@ jobs:
       - uses: asdf-vm/actions/install@v2
       - name: Get dependencies
         run: dart pub get
-      - name: Run code generation
-        run: dart run build_runner build
       - name: Run tests
         run: dart test
 
@@ -39,7 +37,5 @@ jobs:
       - uses: asdf-vm/actions/install@v2
       - name: Get dependencies
         run: dart pub get
-      - name: Run code generation
-        run: dart run build_runner build
       - name: Run Analysis
         run: dart analyze --fatal-infos
