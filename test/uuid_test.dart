@@ -2,7 +2,7 @@ import 'package:sane_uuid/uuid.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('A group of tests', () {
+  group('example UUID', () {
     late Uuid uuid;
 
     setUp(() {
