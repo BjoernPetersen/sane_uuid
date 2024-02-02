@@ -80,7 +80,10 @@ final class Uuid1Generator {
 
 /// Builds UUID bytes by reading from [getByte] and multiplexing the variant
 /// and [version] in the appropriate places.
-ByteBuffer _buildBytes(int version, int Function(int index) getByte) {
+ByteBuffer _buildBytes({
+  required int version,
+  required int Function(int index) getByte,
+}) {
   final builder = BytesBuilder(copy: false);
   for (var byteIndex = 0; byteIndex < kUuidBytes; byteIndex += 1) {
     var byte = getByte(byteIndex);
@@ -103,7 +106,7 @@ final class Uuid4Generator {
   Uuid4Generator(Random? random) : _random = random ?? _fallbackRandom.value;
 
   ByteBuffer generate() {
-    return _buildBytes(4, (_) => _random.nextInt(255));
+    return _buildBytes(version: 4, getByte: (_) => _random.nextInt(255));
   }
 }
 
@@ -118,6 +121,6 @@ final class Uuid5Generator {
 
   ByteBuffer generate({required Uuid namespace, required String name}) {
     final digest = _createDigest(namespace, name).asByteData(0, kUuidBytes);
-    return _buildBytes(5, (index) => digest.getUint8(index));
+    return _buildBytes(version: 5, getByte: digest.getUint8);
   }
 }
