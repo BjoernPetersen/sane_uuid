@@ -1,3 +1,9 @@
+## 1.0.0-alpha.6
+
+### Breaking Changes
+
+- Bumped minimum Dart version to 3.3.0
+
 ## 1.0.0-alpha.5
 
 ### Breaking Changes
