@@ -3,6 +3,8 @@
 ### Breaking Changes
 
 - Bumped minimum Dart version to 3.3.0
+- The `Uuid.fromBytes` factory now accepts a Uint8List instead of a ByteBuffer
+- The type of `Uuid.bytes` has changed to Uint8List.
 
 ## 1.0.0-alpha.5
 

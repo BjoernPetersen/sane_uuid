@@ -36,7 +36,7 @@ void main() {
 
     test('are unmodifiable', () {
       expect(
-        () => testUuid.bytes.asUint8List()[0] = 0,
+        () => testUuid.bytes[0] = 0,
         throwsUnsupportedError,
       );
     });

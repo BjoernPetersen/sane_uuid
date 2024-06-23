@@ -113,7 +113,7 @@ final class Uuid4Generator {
 final class Uuid5Generator {
   ByteBuffer _createDigest(Uuid namespace, String name) {
     final concatenated = <int>[];
-    concatenated.addAll(namespace.bytes.asUint8List());
+    concatenated.addAll(namespace.bytes);
     concatenated.addAll(utf8.encode(name));
     final digest = sha1.convert(concatenated);
     return Uint8List.fromList(digest.bytes).buffer;

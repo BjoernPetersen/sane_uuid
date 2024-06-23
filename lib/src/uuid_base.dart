@@ -38,14 +38,11 @@ final class Uuid implements Comparable<Uuid> {
   /// 128 bits set to zero.
   static final Uuid nil = Uuid._fromValidBytes(Uint8List(kUuidBytes));
 
-  /// This is always an unmodifiable list, which is enforced by the constructor.
-  final Uint8List _rawBytes;
-
-  /// The raw bytes of this UUID. The returned ByteBuffer is unmodifiable and
+  /// The raw bytes of this UUID. The returned Uint8List is unmodifiable and
   /// contains exactly 16 bytes.
-  ByteBuffer get bytes => _rawBytes.buffer;
+  final Uint8List bytes;
 
-  ByteData get _byteData => bytes.asByteData();
+  ByteData get _byteData => bytes.buffer.asByteData();
 
   /// The low field of the timestamp, i.e. octets 0-3.
   /// This field will be random for v4 UUIDs.
@@ -195,8 +192,7 @@ final class Uuid implements Comparable<Uuid> {
   ///
   /// The given byte buffer will be wrapped in an unmodifiable view and will
   /// never be modified.
-  Uuid._fromValidBytes(Uint8List bytes)
-      : _rawBytes = bytes.asUnmodifiableView();
+  Uuid._fromValidBytes(Uint8List bytes) : bytes = bytes.asUnmodifiableView();
 
   /// Generates a v1 (time-based) UUID.
   ///
@@ -270,13 +266,13 @@ final class Uuid implements Comparable<Uuid> {
     return Uuid._fromValidBytes(builder.takeBytes());
   }
 
-  /// Construct a UUID from the given byte buffer.
+  /// Construct a UUID from the given byte list.
   ///
   /// The given [uuidBytes] will be copied to prevent modifications.
   ///
   /// This method throws an [ArgumentError] if, and only if, the [uuidBytes]
-  /// buffer wasn't exactly 16 bytes (see [kUuidBytes]) long.
-  factory Uuid.fromBytes(ByteBuffer uuidBytes) {
+  /// list wasn't exactly 16 bytes (see [kUuidBytes]) long.
+  factory Uuid.fromBytes(Uint8List uuidBytes) {
     if (uuidBytes.lengthInBytes != kUuidBytes) {
       throw ArgumentError.value(
         uuidBytes,
@@ -285,11 +281,7 @@ final class Uuid implements Comparable<Uuid> {
       );
     }
 
-    final copy = Uint8List(uuidBytes.lengthInBytes);
-    final inputList = uuidBytes.asInt8List();
-    for (var index = 0; index < copy.length; index += 1) {
-      copy[index] = inputList[index];
-    }
+    final copy = Uint8List.fromList(uuidBytes);
     return Uuid._fromValidBytes(copy);
   }
 
@@ -302,7 +294,7 @@ final class Uuid implements Comparable<Uuid> {
 
   @override
   int get hashCode {
-    return bytes.asUint32List().reduce((a, b) => a ^ b);
+    return bytes.buffer.asUint32List().reduce((a, b) => a ^ b);
   }
 
   /// Returns the string representation of this UUID as specified by RFC 4122.
@@ -329,8 +321,8 @@ final class Uuid implements Comparable<Uuid> {
   @override
   int compareTo(Uuid other) {
     // We just compare the underlying bytes without a care about the specifics
-    final valueIterator = bytes.asUint32List().iterator;
-    final otherValueIterator = other.bytes.asUint32List().iterator;
+    final valueIterator = bytes.buffer.asUint32List().iterator;
+    final otherValueIterator = other.bytes.buffer.asUint32List().iterator;
     while (valueIterator.moveNext() && otherValueIterator.moveNext()) {
       final diff = valueIterator.current - otherValueIterator.current;
       if (diff != 0) {
