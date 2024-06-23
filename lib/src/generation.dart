@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
+import 'package:meta/meta.dart';
 import 'package:sane_uuid/src/late.dart';
 import 'package:sane_uuid/src/uuid_base.dart';
 
@@ -48,6 +49,12 @@ final class Uuid1Generator {
 
   int _getNode() {
     return _node ??= _generateNode();
+  }
+
+  @visibleForTesting
+  void setClockSequenceToZero() {
+    _clockSequence = 0;
+    _lastTime = DateTime.fromMillisecondsSinceEpoch(0);
   }
 
   Uint8List generate({DateTime? time, int? nodeId}) {
