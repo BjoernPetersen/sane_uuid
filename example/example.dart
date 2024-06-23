@@ -32,6 +32,6 @@ void main() {
   final timeBasedUuid = Uuid.v1();
   assert(timeBasedUuid.version == 1);
   final time = timeBasedUuid.parsedTime;
-  // A usable timestamp for v1 UUIDs!
+  // A usable DateTime timestamp for v1 UUIDs!
   print(time);
 }
