@@ -1,5 +1,7 @@
 # sane_uuid
 
+[![codecov](https://codecov.io/github/BjoernPetersen/sane_uuid/graph/badge.svg?token=Aq3lxFN46g)](https://codecov.io/github/BjoernPetersen/sane_uuid)
+
 A properly designed UUID library for Dart.
 
 - v1, v4, and v5 generation
