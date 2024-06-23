@@ -8,7 +8,7 @@ void main() {
       expect(uuid.toString(), '64ee70a4-8cc1-5d25-abf2-dea6c79a09c8');
       expect(uuid.version, 5);
       expect(
-        () => uuid.bytes.asUint8List()[0] = 0,
+        () => uuid.bytes[0] = 0,
         throwsUnsupportedError,
         reason:
             'The exception should be thrown because Uuid objects should be immutable',
@@ -22,7 +22,7 @@ void main() {
       expect(uuid.toString(), '9a4cda5b-12b5-5e03-822a-7d33af73bcf0');
       expect(uuid.version, 5);
       expect(
-        () => uuid.bytes.asUint8List()[0] = 0,
+        () => uuid.bytes[0] = 0,
         throwsUnsupportedError,
         reason:
             'The exception should be thrown because Uuid objects should be immutable',
