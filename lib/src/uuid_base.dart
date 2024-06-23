@@ -36,11 +36,14 @@ enum UuidVariant {
 final class Uuid implements Comparable<Uuid> {
   /// The nil UUID is special form of UUID that is specified to have all
   /// 128 bits set to zero.
-  static final Uuid nil = Uuid._fromValidBytes(Uint8List(kUuidBytes).buffer);
+  static final Uuid nil = Uuid._fromValidBytes(Uint8List(kUuidBytes));
+
+  /// This is always an unmodifiable list, which is enforced by the constructor.
+  final Uint8List _rawBytes;
 
   /// The raw bytes of this UUID. The returned ByteBuffer is unmodifiable and
   /// contains exactly 16 bytes.
-  final ByteBuffer bytes;
+  ByteBuffer get bytes => _rawBytes.buffer;
 
   ByteData get _byteData => bytes.asByteData();
 
@@ -190,9 +193,10 @@ final class Uuid implements Comparable<Uuid> {
 
   /// Creates an instance from the given bytes without defensively copying them.
   ///
-  /// The given byte buffer will be wrapped in an unmodifiable view.
-  Uuid._fromValidBytes(ByteBuffer bytes)
-      : bytes = UnmodifiableByteBufferView(bytes);
+  /// The given byte buffer will be wrapped in an unmodifiable view and will
+  /// never be modified.
+  Uuid._fromValidBytes(Uint8List bytes)
+      : _rawBytes = bytes.asUnmodifiableView();
 
   /// Generates a v1 (time-based) UUID.
   ///
@@ -206,7 +210,7 @@ final class Uuid implements Comparable<Uuid> {
   factory Uuid.v1({int? nodeId}) {
     final bytes = Uuid1Generator().generate(nodeId: nodeId);
     // We trust our own generator not to modify the bytes anymore.
-    return Uuid._fromValidBytes(bytes);
+    return Uuid._fromValidBytes(bytes.asUint8List());
   }
 
   /// Generates a v4 (random) UUID.
@@ -216,7 +220,7 @@ final class Uuid implements Comparable<Uuid> {
   factory Uuid.v4({Random? random}) {
     final bytes = Uuid4Generator(random).generate();
     // We trust our own generator not to modify the bytes anymore.
-    return Uuid._fromValidBytes(bytes);
+    return Uuid._fromValidBytes(bytes.asUint8List());
   }
 
   /// Generates a v5 (name-based with SHA-1) UUID.
@@ -229,7 +233,7 @@ final class Uuid implements Comparable<Uuid> {
   factory Uuid.v5({required Uuid namespace, required String name}) {
     final bytes = Uuid5Generator().generate(namespace: namespace, name: name);
     // We trust our own generator not to modify the bytes anymore.
-    return Uuid._fromValidBytes(bytes);
+    return Uuid._fromValidBytes(bytes.asUint8List());
   }
 
   /// Parses a UUID from the given String.
@@ -263,7 +267,7 @@ final class Uuid implements Comparable<Uuid> {
       builder.add(data);
     }
 
-    return Uuid._fromValidBytes(builder.takeBytes().buffer);
+    return Uuid._fromValidBytes(builder.takeBytes());
   }
 
   /// Construct a UUID from the given byte buffer.
@@ -286,7 +290,7 @@ final class Uuid implements Comparable<Uuid> {
     for (var index = 0; index < copy.length; index += 1) {
       copy[index] = inputList[index];
     }
-    return Uuid._fromValidBytes(copy.buffer);
+    return Uuid._fromValidBytes(copy);
   }
 
   @override
