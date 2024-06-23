@@ -50,7 +50,7 @@ final class Uuid1Generator {
     return _node ??= _generateNode();
   }
 
-  ByteBuffer generate({DateTime? time, int? nodeId}) {
+  Uint8List generate({DateTime? time, int? nodeId}) {
     final utcTime = (time ?? DateTime.now()).toUtc();
     final clockSequence = _updateClockSequence(utcTime);
     final timestamp = _createTimestamp(utcTime);
@@ -74,13 +74,13 @@ final class Uuid1Generator {
 
     builder.setUint16(10, node >> 32);
     builder.setUint32(12, node & 0xFFFFFFFF);
-    return builder.buffer;
+    return builder.buffer.asUint8List();
   }
 }
 
 /// Builds UUID bytes by reading from [getByte] and multiplexing the variant
 /// and [version] in the appropriate places.
-ByteBuffer _buildBytes({
+Uint8List _buildBytes({
   required int version,
   required int Function(int index) getByte,
 }) {
@@ -96,7 +96,7 @@ ByteBuffer _buildBytes({
     }
     builder.addByte(byte);
   }
-  return builder.takeBytes().buffer;
+  return builder.takeBytes();
 }
 
 final class Uuid4Generator {
@@ -105,7 +105,7 @@ final class Uuid4Generator {
 
   Uuid4Generator(Random? random) : _random = random ?? _fallbackRandom.value;
 
-  ByteBuffer generate() {
+  Uint8List generate() {
     return _buildBytes(version: 4, getByte: (_) => _random.nextInt(255));
   }
 }
@@ -119,7 +119,7 @@ final class Uuid5Generator {
     return Uint8List.fromList(digest.bytes).buffer;
   }
 
-  ByteBuffer generate({required Uuid namespace, required String name}) {
+  Uint8List generate({required Uuid namespace, required String name}) {
     final digest = _createDigest(namespace, name).asByteData(0, kUuidBytes);
     return _buildBytes(version: 5, getByte: digest.getUint8);
   }
