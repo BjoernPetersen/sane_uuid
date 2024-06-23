@@ -206,7 +206,7 @@ final class Uuid implements Comparable<Uuid> {
   factory Uuid.v1({int? nodeId}) {
     final bytes = Uuid1Generator().generate(nodeId: nodeId);
     // We trust our own generator not to modify the bytes anymore.
-    return Uuid._fromValidBytes(bytes.asUint8List());
+    return Uuid._fromValidBytes(bytes);
   }
 
   /// Generates a v4 (random) UUID.
@@ -216,7 +216,7 @@ final class Uuid implements Comparable<Uuid> {
   factory Uuid.v4({Random? random}) {
     final bytes = Uuid4Generator(random).generate();
     // We trust our own generator not to modify the bytes anymore.
-    return Uuid._fromValidBytes(bytes.asUint8List());
+    return Uuid._fromValidBytes(bytes);
   }
 
   /// Generates a v5 (name-based with SHA-1) UUID.
@@ -229,7 +229,7 @@ final class Uuid implements Comparable<Uuid> {
   factory Uuid.v5({required Uuid namespace, required String name}) {
     final bytes = Uuid5Generator().generate(namespace: namespace, name: name);
     // We trust our own generator not to modify the bytes anymore.
-    return Uuid._fromValidBytes(bytes.asUint8List());
+    return Uuid._fromValidBytes(bytes);
   }
 
   /// Parses a UUID from the given String.
