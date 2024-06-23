@@ -22,6 +22,12 @@ void main() {
           2,
           reason: 'which should be the reserved bits specified in the RFC',
         );
+        expect(
+          () => uuid.bytes.asUint8List()[0] = 0,
+          throwsUnsupportedError,
+          reason:
+              'The exception should be thrown because Uuid objects should be immutable',
+        );
       });
     }
   });
