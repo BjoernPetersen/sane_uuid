@@ -224,8 +224,6 @@ final class Uuid implements Comparable<Uuid> {
   /// Expects a [namespace] UUID. Some predefined namespace UUIDs can be found
   /// in [Namespaces]. The [name] should conform to the conventions of the
   /// namespace.
-  ///
-  /// **WARNING: The v5 implementation is known to be incorrect.**
   factory Uuid.v5({required Uuid namespace, required String name}) {
     final bytes = Uuid5Generator().generate(namespace: namespace, name: name);
     // We trust our own generator not to modify the bytes anymore.
