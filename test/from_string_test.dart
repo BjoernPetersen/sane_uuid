@@ -33,6 +33,13 @@ void main() {
         expect(uuid.hashCode, equals(testUuid.hashCode));
       });
     }
+
+    test('are unmodifiable', () {
+      expect(
+        () => testUuid.bytes.asUint8List()[0] = 0,
+        throwsUnsupportedError,
+      );
+    });
   });
 
   group('invalid values', () {
