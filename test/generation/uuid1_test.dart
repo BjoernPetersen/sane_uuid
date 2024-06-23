@@ -68,6 +68,7 @@ void main() {
           '5e2c13f2-31c5-11ef-8000-f123456789ab',
         );
         expect(uuid, reference);
+        expect(uuid.parsedTime, time);
       });
     });
   });

@@ -1,3 +1,9 @@
+## 1.0.1
+
+### Bugfixes
+
+- Fixed rounding error in `Uuid.parsedTime`
+
 ## 1.0.0
 
 ### Breaking Changes

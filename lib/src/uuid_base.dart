@@ -112,7 +112,7 @@ final class Uuid implements Comparable<Uuid> {
     // since 00:00:00.00, 15 October 1582.
     final referenceTime = DateTime.utc(1582, 10, 15);
     // 1000 nanoseconds are a microsecond.
-    final microseconds = (time / 10).round();
+    final microseconds = (time ~/ 10);
     final timeDuration = Duration(microseconds: microseconds);
     return referenceTime.add(timeDuration);
   }
