@@ -2,7 +2,7 @@
 
 [![codecov](https://codecov.io/github/BjoernPetersen/sane_uuid/graph/badge.svg?token=Aq3lxFN46g)](https://codecov.io/github/BjoernPetersen/sane_uuid)
 
-A properly designed UUID library for Dart.
+A properly designed, efficient UUID library for Dart.
 
 - Supports v1, v4, and v5 generation
 - Immutable `Uuid` type with equality, comparison and accessors for properties defined by RFC4122
@@ -26,8 +26,13 @@ final parsedUuid = Uuid.fromString(
   'a8796ef4-8767-4cd0-b432-c5e93ba120df',
 );
 
+// hyphens and capitalization don't matter
+final parsedUuidDifferentFormatting = Uuid.fromString(
+    'A8796EF487674CD0B432C5E93BA120DF',
+);
+
 // UUID objects with the same data are actually equal
-assertTrue(randomUuid == parsedUuid);
+assert(parsedUuid == parsedUuidDifferentFormatting);
 ```
 
 For more examples, see the [examples](example) page.
