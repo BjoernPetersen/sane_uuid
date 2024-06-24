@@ -4,8 +4,8 @@
 
 A properly designed, efficient UUID library for Dart.
 
-- Supports v1, v4, and v5 generation
-- Immutable `Uuid` type with equality, comparison and accessors for properties defined by RFC4122
+- Supports v1, v4, v5 and v6 generation
+- Immutable `Uuid` type with equality, comparison and accessors for properties defined by RFC 4122
   - The internal representation of the UUID is a byte array, not a String
 - Support for all syntactically correct UUIDs (regardless of RFC4122 semantics)
 

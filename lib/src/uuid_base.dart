@@ -17,7 +17,8 @@ enum UuidVariant {
   /// Reserved, NCS backward compatibility.
   ncsReserved,
 
-  /// The variant specified by RFC 4122.
+  /// The variant specified by RFC 9562. The constant is still named after the
+  /// obsoleted older RFC 4122 that originally specified UUIDs.
   rfc4122,
 
   ///  Reserved, Microsoft Corporation backward compatibility.
@@ -54,6 +55,8 @@ final class Uuid implements Comparable<Uuid> {
   /// This field will be random for v4 UUIDs.
   ///
   /// Note that the full timestamp can be retrieved using [time].
+  ///
+  /// **Warning:** This accessor is not accurate for v6 UUIDs.
   int get timeLow => _byteData.getUint32(0);
 
   /// The mid field of the timestamp, i.e. octets 4-5.
@@ -67,17 +70,21 @@ final class Uuid implements Comparable<Uuid> {
   /// version bits will be 4 (`0b0100`).
   ///
   /// Note that the full timestamp can be retrieved using [time].
+  ///
+  /// **Warning:** This accessor is not accurate for v6 UUIDs.
   int get timeHighAndVersion => _byteData.getUint16(6);
 
   /// The high field of the timestamp without the version number that was
   /// originally multiplexed into [timeHighAndVersion].
   ///
   /// Note that the full timestamp can be retrieved using [time].
+  ///
+  /// **Warning:** This accessor is not accurate for v6 UUIDs.
   int get timeHigh => timeHighAndVersion & 0x0FFF;
 
   /// The full "timestamp" of the UUID.
   /// Note that [parsedTime] provides a parsed version of this timestamp,
-  /// albeit only for v1 UUIDs.
+  /// albeit only for v1 and v6 UUIDs.
   ///
   /// ## Definition from RFC 4122
   ///
@@ -99,20 +106,27 @@ final class Uuid implements Comparable<Uuid> {
   /// For UUID version 4, the timestamp is a randomly or pseudo-randomly
   /// generated 60-bit value, as described in
   /// [Section 4.4](https://tools.ietf.org/html/rfc4122#section-4.4).
-  int get time => (timeHigh << 48) + (timeMid << 32) + timeLow;
+  int get time {
+    if (version != 6) {
+      return (timeHigh << 48) + (timeMid << 32) + timeLow;
+    } else {
+      // Cheating a bit by using the wrongly named accessors here.
+      return (timeLow << 28) + (timeMid << 12) + timeHigh;
+    }
+  }
 
   /// The parsed [time] as a usable [DateTime] object.
   ///
-  /// This method is only useful for v1 UUIDs, because the [time] field has
-  /// different semantics for other version.
+  /// This method is only useful for v1 and v6 UUIDs, because the [time] field
+  /// has different semantics for other version.
   ///
   /// Throws a [StateError] if [variant] is not [UuidVariant.rfc4122] or
-  /// [version] is not 1.
+  /// [version] is not 1 or 6.
   DateTime get parsedTime {
     if (variant != UuidVariant.rfc4122) {
       throw StateError('Only available for RFC 4122 UUIDs');
-    } else if (version != 1) {
-      throw StateError('Only available for v1 UUIDs');
+    } else if (version != 1 && version != 6) {
+      throw StateError('Only available for v1 and v6 UUIDs');
     }
     // time is the count of 100-nanosecond intervals
     // since 00:00:00.00, 15 October 1582.
@@ -125,14 +139,18 @@ final class Uuid implements Comparable<Uuid> {
 
   /// The version that was originally multiplexed in [timeHighAndVersion].
   ///
-  /// If this UUID conforms to the structure laid out in RFC 4122, this will
-  /// be a number between 1 and 5 with the following descriptions:
+  /// If this UUID conforms to the structure laid out in RFC 9562 (obsoletes
+  /// RFC 4122), this will be a number between 1 and 8 with the following
+  /// descriptions:
   ///
-  /// - 1: Time-based version
-  /// - 2: DCE Security version, with embedded POSIX UIDs
+  /// - 1: Gregorian time-based version
+  /// - 2: DCE Security version, with embedded POSIX UUIDs
   /// - 3: Name-based version with MD5 hashing
-  /// - 4: Random version
+  /// - 4: Randomly generated version
   /// - 5: Name-based version with SHA-1 hashing
+  /// - 6: Reordered Gregorian time-based version
+  /// - 7: Unix Epoch time-based version
+  /// - 8: Custom formats specified by RFC 9562
   int get version => timeHighAndVersion >> 12;
 
   /// The high field of the clock sequence multiplexed with the variant.
@@ -232,6 +250,24 @@ final class Uuid implements Comparable<Uuid> {
   /// namespace.
   factory Uuid.v5({required Uuid namespace, required String name}) {
     final bytes = Uuid5Generator().generate(namespace: namespace, name: name);
+    // We trust our own generator not to modify the bytes anymore.
+    return Uuid._fromValidBytes(bytes);
+  }
+
+  /// Generates a v6 (time-based) UUID as defined by RFC 9562.
+  ///
+  /// The implementation behaves exactly like the [v1] implementation, just with
+  /// the timestamp parts reordered so UUIDs are automatically sorted by time.
+  ///
+  /// The default implementation doesn't use a real MAC address as a node ID.
+  /// Instead it generates a random node ID and sets the "multi-cast bit"
+  /// as recommended by RFC 4122. A generated node ID will be kept in-memory
+  /// and reused during the lifetime of a process, but won't be persisted.
+  ///
+  /// Instead of using a generated node ID, you may specify one using [nodeId].
+  /// If the given node ID is larger than 48-bit, an [ArgumentError] is thrown.
+  factory Uuid.v6({int? nodeId}) {
+    final bytes = Uuid6Generator().generate(nodeId: nodeId);
     // We trust our own generator not to modify the bytes anymore.
     return Uuid._fromValidBytes(bytes);
   }
