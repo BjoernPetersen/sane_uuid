@@ -9,12 +9,11 @@ import 'package:sane_uuid/src/uuid_base.dart';
 
 const _variant = 2 << 6;
 
-final class Uuid1Generator {
-  static const _version = 1 << 12;
+sealed class GregorianUuidGenerator {
   static final _random = Late(() => Random.secure());
-  static DateTime? _lastTime;
-  static int? _clockSequence;
-  static int? _node;
+  DateTime? _lastTime;
+  int? _clockSequence;
+  int? _node;
 
   int _generateClockSequence() {
     final random = _random.value;
@@ -51,12 +50,16 @@ final class Uuid1Generator {
     return _node ??= _generateNode();
   }
 
+  @nonVirtual
   @visibleForTesting
-  void setClockSequenceToZero() {
-    _clockSequence = 0;
+  void setClockSequence([int value = 0]) {
+    _clockSequence = value;
     _lastTime = DateTime.fromMillisecondsSinceEpoch(0);
   }
 
+  void _setTimestampAndVersion(ByteData builder, int timestamp);
+
+  @nonVirtual
   Uint8List generate({DateTime? time, int? nodeId}) {
     final utcTime = (time ?? DateTime.now()).toUtc();
     final clockSequence = _updateClockSequence(utcTime);
@@ -72,9 +75,7 @@ final class Uuid1Generator {
     final node = nodeId ?? _getNode();
 
     final builder = ByteData(16);
-    builder.setUint32(0, timestamp & 0xFFFFFFFF);
-    builder.setUint16(4, (timestamp >> 32) & 0xFFFF);
-    builder.setUint16(6, (timestamp >> 48) + _version);
+    _setTimestampAndVersion(builder, timestamp);
 
     builder.setUint8(8, (clockSequence >> 8) + _variant);
     builder.setUint8(9, clockSequence & 0xFF);
@@ -82,6 +83,38 @@ final class Uuid1Generator {
     builder.setUint16(10, node >> 32);
     builder.setUint32(12, node & 0xFFFFFFFF);
     return builder.buffer.asUint8List();
+  }
+}
+
+final class Uuid1Generator extends GregorianUuidGenerator {
+  static const _version = 1 << 12;
+  static final _instance = Late(() => Uuid1Generator._());
+
+  Uuid1Generator._();
+
+  factory Uuid1Generator() => _instance.value;
+
+  @override
+  void _setTimestampAndVersion(ByteData builder, int timestamp) {
+    builder.setUint32(0, timestamp & 0xFFFFFFFF);
+    builder.setUint16(4, (timestamp >> 32) & 0xFFFF);
+    builder.setUint16(6, (timestamp >> 48) + _version);
+  }
+}
+
+final class Uuid6Generator extends GregorianUuidGenerator {
+  static const _version = 6 << 12;
+  static final _instance = Late(() => Uuid6Generator._());
+
+  Uuid6Generator._();
+
+  factory Uuid6Generator() => _instance.value;
+
+  @override
+  void _setTimestampAndVersion(ByteData builder, int timestamp) {
+    builder.setUint32(0, timestamp >> 28);
+    builder.setUint16(4, (timestamp >> 12) & 0xFFFF);
+    builder.setUint16(6, (timestamp & 0xFFF) + _version);
   }
 }
 
