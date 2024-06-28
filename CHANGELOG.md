@@ -1,3 +1,9 @@
+## 1.1.0
+
+### Features
+
+- You can now generate v6 UUIDs (specified by RFC 9562) using `Uuid.v6()`
+
 ## 1.0.1
 
 ### Bugfixes
