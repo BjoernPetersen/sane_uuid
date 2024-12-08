@@ -6,8 +6,8 @@ on:
   pull_request: { }
 
 jobs:
-  validate-renovate-config:
-    uses: BlindfoldedSurgery/renovate-config/.github/workflows/validate.yml@main
+  required-meta:
+    uses: BlindfoldedSurgery/actions-meta/.github/workflows/required.yml@v1
 
   test:
     name: Test
