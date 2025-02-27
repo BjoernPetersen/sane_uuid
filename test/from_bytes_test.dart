@@ -10,10 +10,7 @@ void main() {
 
     test('are parsed correctly', () {
       final uuid = Uuid.fromBytes(testUuid.bytes);
-      expect(
-        uuid,
-        testUuid,
-      );
+      expect(uuid, testUuid);
     });
 
     test('are defensively copied', () {
@@ -26,10 +23,7 @@ void main() {
 
     test('are unmodifiable', () {
       final uuid = Uuid.fromBytes(testUuid.bytes);
-      expect(
-        () => uuid.bytes[0] = 0,
-        throwsUnsupportedError,
-      );
+      expect(() => uuid.bytes[0] = 0, throwsUnsupportedError);
     });
 
     test('respect views', () {
@@ -58,10 +52,7 @@ void main() {
     test('bytes too long', () {
       final bytes = Uint8List(testUuid.bytes.lengthInBytes + 1);
       bytes.setAll(0, testUuid.bytes);
-      expect(
-        () => Uuid.fromBytes(bytes),
-        throwsArgumentError,
-      );
+      expect(() => Uuid.fromBytes(bytes), throwsArgumentError);
     });
   });
 }

@@ -35,10 +35,7 @@ void main() {
     }
 
     test('are unmodifiable', () {
-      expect(
-        () => testUuid.bytes[0] = 0,
-        throwsUnsupportedError,
-      );
+      expect(() => testUuid.bytes[0] = 0, throwsUnsupportedError);
     });
   });
 
