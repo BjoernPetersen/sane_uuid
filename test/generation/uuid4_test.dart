@@ -8,15 +8,11 @@ void main() {
     for (final (name, random) in [
       ('null', null),
       ('insecure', Random()),
-      ('secure', Random.secure())
+      ('secure', Random.secure()),
     ]) {
       test('with $name random', () {
         final uuid = Uuid.v4(random: random);
-        expect(
-          uuid.version,
-          4,
-          reason: 'indicating a wrong UUID version',
-        );
+        expect(uuid.version, 4, reason: 'indicating a wrong UUID version');
         expect(
           uuid.clockSequenceHighAndReserved >> 6,
           2,

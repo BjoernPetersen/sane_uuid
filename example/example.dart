@@ -17,12 +17,8 @@ void main() {
   assert(parsedHyphenated.hashCode == parsedWithoutHyphens.hashCode);
 
   // UUID objects can be compared/sorted lexicographically
-  final biggerUuid = Uuid.fromString(
-    'b8796ef4-8767-4cd0-b432-c5e93ba120df',
-  );
-  final smallerUuid = Uuid.fromString(
-    '18796ef4-8767-4cd0-b432-c5e93ba120df',
-  );
+  final biggerUuid = Uuid.fromString('b8796ef4-8767-4cd0-b432-c5e93ba120df');
+  final smallerUuid = Uuid.fromString('18796ef4-8767-4cd0-b432-c5e93ba120df');
   final list = [biggerUuid, smallerUuid, parsedHyphenated];
   list.sort();
   // Is ordered like this now: [smallerUuid, parsedHyphenated, biggerUuid]

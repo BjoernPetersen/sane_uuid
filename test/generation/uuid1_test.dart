@@ -40,14 +40,12 @@ void main() {
         final time = DateTime.now();
         await Future.delayed(const Duration(seconds: 1));
         final laterTime = DateTime.now();
-        final uuid = Uuid.fromBytes(Uuid1Generator().generate(
-          time: laterTime,
-          nodeId: 0,
-        ));
-        final uuid2 = Uuid.fromBytes(Uuid1Generator().generate(
-          time: time,
-          nodeId: 0,
-        ));
+        final uuid = Uuid.fromBytes(
+          Uuid1Generator().generate(time: laterTime, nodeId: 0),
+        );
+        final uuid2 = Uuid.fromBytes(
+          Uuid1Generator().generate(time: time, nodeId: 0),
+        );
 
         expect(uuid, isNot(uuid2));
         expect(uuid.node, uuid2.node);
@@ -59,10 +57,9 @@ void main() {
         final generator = Uuid1Generator();
         generator.setClockSequence();
 
-        final uuid = Uuid.fromBytes(generator.generate(
-          time: time,
-          nodeId: 0xF123456789AB,
-        ));
+        final uuid = Uuid.fromBytes(
+          generator.generate(time: time, nodeId: 0xF123456789AB),
+        );
 
         final reference = Uuid.fromString(
           '5e2c13f2-31c5-11ef-8000-f123456789ab',

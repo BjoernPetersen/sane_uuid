@@ -40,14 +40,12 @@ void main() {
         final time = DateTime.now();
         await Future.delayed(const Duration(seconds: 1));
         final laterTime = DateTime.now();
-        final uuid = Uuid.fromBytes(Uuid6Generator().generate(
-          time: laterTime,
-          nodeId: 0,
-        ));
-        final uuid2 = Uuid.fromBytes(Uuid6Generator().generate(
-          time: time,
-          nodeId: 0,
-        ));
+        final uuid = Uuid.fromBytes(
+          Uuid6Generator().generate(time: laterTime, nodeId: 0),
+        );
+        final uuid2 = Uuid.fromBytes(
+          Uuid6Generator().generate(time: time, nodeId: 0),
+        );
 
         expect(uuid, isNot(uuid2));
         expect(uuid.node, uuid2.node);
@@ -59,10 +57,9 @@ void main() {
         final generator = Uuid6Generator();
         generator.setClockSequence(0x33C8);
 
-        final uuid = Uuid.fromBytes(generator.generate(
-          time: time,
-          nodeId: 0x9F6BDECED846,
-        ));
+        final uuid = Uuid.fromBytes(
+          generator.generate(time: time, nodeId: 0x9F6BDECED846),
+        );
 
         // Test vector from RFC 9562
         final reference = Uuid.fromString(
