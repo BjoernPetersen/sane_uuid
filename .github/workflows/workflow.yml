@@ -18,7 +18,7 @@ jobs:
 
   test:
     name: Test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -53,7 +53,7 @@ jobs:
 
   check-format:
     name: Check Format
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out repo
         uses: actions/checkout@v5
@@ -67,7 +67,7 @@ jobs:
 
   lint:
     name: Lint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out repo
         uses: actions/checkout@v5
@@ -76,3 +76,20 @@ jobs:
         run: dart pub get
       - name: Run Analysis
         run: dart analyze --fatal-infos
+
+  all-checks-passed:
+    runs-on: ubuntu-24.04
+    if: "!cancelled() && github.event_name == 'pull_request'"
+    needs:
+      - test
+      - check-format
+      - lint
+    steps:
+      - run: |
+          if [ "true" == "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'skipped') }}" ]
+          then
+            echo "A required job failed"
+            exit 1
+          else
+            echo "All required jobs passed"
+          fi
