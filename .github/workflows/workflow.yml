@@ -19,20 +19,34 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - dart-version: "3.8"
+          - dart-version: "3.9"
+          - dart-version: "3.10"
+            collect-coverage: "true"
     steps:
       - name: Check out repo
         uses: actions/checkout@v5
       - uses: jdx/mise-action@v3
+        with:
+          mise_toml: |
+            [tools]
+            dart = "${{ matrix.dart-version }}"
       - name: Get dependencies
         run: dart pub get
       - name: Run tests
         run: dart test --file-reporter json:test-results.json --coverage=.coverage
-      - name: Install coverage package
-        run: dart pub global activate coverage
-      - name: Convert to LCOV
-        run: dart pub global run coverage:format_coverage --report-on=lib --lcov -o ./.coverage/lcov.info -i ./.coverage
+      - name: Convert coverage file package
+        if: matrix.collect-coverage == 'true'
+        run: |
+          dart pub global activate coverage
+          dart pub global run coverage:format_coverage --report-on=lib --lcov -o ./.coverage/lcov.info -i ./.coverage
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
+        if: matrix.collect-coverage == 'true'
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: .coverage/lcov.info
