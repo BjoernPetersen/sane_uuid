@@ -5,8 +5,15 @@ on:
       - 'main'
   pull_request: { }
 
+permissions:
+  contents: read
+
 jobs:
   required-meta:
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
     uses: BlindfoldedSurgery/actions-meta/.github/workflows/required.yml@v2
 
   test:
