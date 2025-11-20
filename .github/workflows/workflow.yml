@@ -29,7 +29,7 @@ jobs:
             collect-coverage: "true"
     steps:
       - name: Check out repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - uses: jdx/mise-action@v3
         with:
           mise_toml: |
@@ -56,7 +56,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - uses: jdx/mise-action@v3
       - name: Check example formatting
         run: dart format example --set-exit-if-changed
@@ -70,7 +70,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - uses: jdx/mise-action@v3
       - name: Get dependencies
         run: dart pub get
