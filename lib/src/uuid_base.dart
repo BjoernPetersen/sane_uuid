@@ -117,16 +117,20 @@ final class Uuid implements Comparable<Uuid> {
 
   /// The parsed [time] as a usable [DateTime] object.
   ///
-  /// This method is only useful for v1 and v6 UUIDs, because the [time] field
-  /// has different semantics for other version.
+  /// This method is only useful for v1, v6 and v7 UUIDs, because the time
+  /// field has different semantics for other versions.
   ///
   /// Throws a [StateError] if [variant] is not [UuidVariant.rfc4122] or
-  /// [version] is not 1 or 6.
+  /// [version] is not 1, 6 or 7.
   DateTime get parsedTime {
     if (variant != UuidVariant.rfc4122) {
       throw StateError('Only available for RFC 4122 UUIDs');
+    } else if (version == 7) {
+      // v7 stores the timestamp as a 48-bit Unix epoch value in milliseconds.
+      final unixTsMs = (timeLow << 16) | timeMid;
+      return DateTime.fromMillisecondsSinceEpoch(unixTsMs, isUtc: true);
     } else if (version != 1 && version != 6) {
-      throw StateError('Only available for v1 and v6 UUIDs');
+      throw StateError('Only available for v1, v6 and v7 UUIDs');
     }
     // time is the count of 100-nanosecond intervals
     // since 00:00:00.00, 15 October 1582.
@@ -254,6 +258,21 @@ final class Uuid implements Comparable<Uuid> {
     return Uuid._fromValidBytes(bytes);
   }
 
+  /// Generates a v7 (Unix Epoch time-based) UUID as defined by RFC 9562.
+  ///
+  /// The first 48 bits encode the current Unix timestamp in milliseconds
+  /// (big-endian), followed by 4 version bits, 12 random bits (`rand_a`),
+  /// 2 variant bits, and 62 random bits (`rand_b`). This layout makes v7
+  /// UUIDs naturally sortable by creation time.
+  ///
+  /// If you don't pass a random number generator for the [random] parameter,
+  /// a global secure one will be used.
+  factory Uuid.v7({Random? random}) {
+    final bytes = Uuid7Generator(random).generate();
+    // We trust our own generator not to modify the bytes anymore.
+    return Uuid._fromValidBytes(bytes);
+  }
+
   /// Generates a v6 (time-based) UUID as defined by RFC 9562.
   ///
   /// The implementation behaves exactly like the [v1] implementation, just with
@@ -325,6 +344,8 @@ final class Uuid implements Comparable<Uuid> {
     return Uuid._fromValidBytes(copy);
   }
 
+  factory Uuid.fromJson(String json) => Uuid.fromString(json);
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -349,6 +370,8 @@ final class Uuid implements Comparable<Uuid> {
       encoded.substring(20),
     ].join('-');
   }
+
+  String toJson() => toString();
 
   bool operator <(Uuid other) => compareTo(other) < 0;
 
