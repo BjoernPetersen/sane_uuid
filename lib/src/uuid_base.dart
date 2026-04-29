@@ -325,6 +325,8 @@ final class Uuid implements Comparable<Uuid> {
     return Uuid._fromValidBytes(copy);
   }
 
+  factory Uuid.fromJson(String json) => Uuid.fromString(json);
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -349,6 +351,8 @@ final class Uuid implements Comparable<Uuid> {
       encoded.substring(20),
     ].join('-');
   }
+
+  String toJson() => toString();
 
   bool operator <(Uuid other) => compareTo(other) < 0;
 
