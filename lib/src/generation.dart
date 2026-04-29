@@ -150,6 +150,38 @@ final class Uuid4Generator {
   }
 }
 
+final class Uuid7Generator {
+  static const _version = 7;
+  static final _fallbackRandom = Late(() => Random.secure());
+  final Random _random;
+
+  Uuid7Generator([Random? random]) : _random = random ?? _fallbackRandom.value;
+
+  Uint8List generate({DateTime? time}) {
+    final utcTime = (time ?? DateTime.now()).toUtc();
+    final unixTsMs = utcTime.millisecondsSinceEpoch;
+
+    if (unixTsMs < 0 || unixTsMs > 0xFFFFFFFFFFFF) {
+      throw ArgumentError.value(
+        time,
+        'time',
+        'Unix millisecond timestamp must fit in 48 bits',
+      );
+    }
+
+    return _buildBytes(
+      version: _version,
+      getByte: (index) {
+        if (index < 6) {
+          final shift = (5 - index) * 8;
+          return (unixTsMs >> shift) & 0xFF;
+        }
+        return _random.nextInt(256);
+      },
+    );
+  }
+}
+
 final class Uuid5Generator {
   ByteBuffer _createDigest(Uuid namespace, String name) {
     final concatenated = <int>[];
