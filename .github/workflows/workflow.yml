@@ -45,7 +45,7 @@ jobs:
           dart pub global activate coverage
           dart pub global run coverage:format_coverage --report-on=lib --lcov -o ./.coverage/lcov.info -i ./.coverage
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7
         if: matrix.collect-coverage == 'true'
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
