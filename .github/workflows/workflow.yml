@@ -29,8 +29,8 @@ jobs:
             collect-coverage: "true"
     steps:
       - name: Check out repo
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - uses: jdx/mise-action@v5
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: jdx/mise-action@v5.1.1
         with:
           mise_toml: |
             [tools]
@@ -45,7 +45,7 @@ jobs:
           dart pub global activate coverage
           dart pub global run coverage:format_coverage --report-on=lib --lcov -o ./.coverage/lcov.info -i ./.coverage
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         if: matrix.collect-coverage == 'true'
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -56,8 +56,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out repo
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - uses: jdx/mise-action@v5
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: jdx/mise-action@v5.1.1
       - name: Check example formatting
         run: dart format example --set-exit-if-changed
       - name: Check lib formatting
@@ -70,8 +70,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out repo
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - uses: jdx/mise-action@v5
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: jdx/mise-action@v5.1.1
       - name: Get dependencies
         run: dart pub get
       - name: Run Analysis
